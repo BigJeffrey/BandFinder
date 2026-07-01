@@ -1,48 +1,92 @@
 const express = require('express');
 const { PrismaClient } = require('@prisma/client');
+const auth = require('../middleware/auth');
+const validate = require('../middleware/validate');
+const { createBandValidation, updateBandValidation } = require('../validators/bandValidators');
 
 const router = express.Router();
 const prisma = new PrismaClient();
 
-// GET /api/bands - Get all bands
-router.get('/', async (req, res) => {
+// GET / - List all bands with optional filters and pagination
+router.get('/', async (req, res, next) => {
   try {
-    const bands = await prisma.band.findMany({
-      include: { user: { select: { id: true, name: true, email: true } } },
-      orderBy: { createdAt: 'desc' },
+    const { city, genre, instrumentNeeded, search, page = 1, limit = 10 } = req.query;
+
+    const where = {};
+
+    if (city) {
+      where.city = { contains: city, mode: 'insensitive' };
+    }
+    if (genre) {
+      where.genre = { contains: genre, mode: 'insensitive' };
+    }
+    if (instrumentNeeded) {
+      where.instrumentNeeded = { contains: instrumentNeeded, mode: 'insensitive' };
+    }
+    if (search) {
+      where.name = { contains: search, mode: 'insensitive' };
+    }
+
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const take = parseInt(limit);
+
+    const [bands, total] = await Promise.all([
+      prisma.band.findMany({
+        where,
+        include: {
+          user: {
+            select: { id: true, name: true, email: true },
+          },
+        },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take,
+      }),
+      prisma.band.count({ where }),
+    ]);
+
+    res.json({
+      data: bands,
+      pagination: {
+        total,
+        page: parseInt(page),
+        limit: parseInt(limit),
+        totalPages: Math.ceil(total / take),
+      },
     });
-    res.json(bands);
   } catch (error) {
-    console.error('Error fetching bands:', error);
-    res.status(500).json({ error: 'Failed to fetch bands' });
+    next(error);
   }
 });
 
-// GET /api/bands/:id - Get band by ID
-router.get('/:id', async (req, res) => {
+// GET /:id - Get band by ID
+router.get('/:id', async (req, res, next) => {
   try {
+    const { id } = req.params;
+
     const band = await prisma.band.findUnique({
-      where: { id: parseInt(req.params.id) },
-      include: { user: { select: { id: true, name: true, email: true } } },
+      where: { id: parseInt(id) },
+      include: {
+        user: {
+          select: { id: true, name: true, email: true },
+        },
+      },
     });
+
     if (!band) {
-      return res.status(404).json({ error: 'Band not found' });
+      return res.status(404).json({ error: 'Band not found.' });
     }
+
     res.json(band);
   } catch (error) {
-    console.error('Error fetching band:', error);
-    res.status(500).json({ error: 'Failed to fetch band' });
+    next(error);
   }
 });
 
-// POST /api/bands - Create a new band
-router.post('/', async (req, res) => {
+// POST / - Create a new band (auth required)
+router.post('/', auth, validate(createBandValidation), async (req, res, next) => {
   try {
     const { name, city, genre, instrumentNeeded, description, contactEmail } = req.body;
-
-    if (!name || !city || !genre || !instrumentNeeded || !description || !contactEmail) {
-      return res.status(400).json({ error: 'All fields are required' });
-    }
 
     const band = await prisma.band.create({
       data: {
@@ -52,26 +96,80 @@ router.post('/', async (req, res) => {
         instrumentNeeded,
         description,
         contactEmail,
-        userId: req.user?.id || 1,
+        userId: req.user.id,
+      },
+      include: {
+        user: {
+          select: { id: true, name: true, email: true },
+        },
       },
     });
+
     res.status(201).json(band);
   } catch (error) {
-    console.error('Error creating band:', error);
-    res.status(500).json({ error: 'Failed to create band' });
+    next(error);
   }
 });
 
-// DELETE /api/bands/:id - Delete a band
-router.delete('/:id', async (req, res) => {
+// PUT /:id - Update a band (auth required, owner only)
+router.put('/:id', auth, validate(updateBandValidation), async (req, res, next) => {
   try {
-    await prisma.band.delete({
-      where: { id: parseInt(req.params.id) },
+    const { id } = req.params;
+
+    const existingBand = await prisma.band.findUnique({
+      where: { id: parseInt(id) },
     });
-    res.json({ message: 'Band deleted successfully' });
+
+    if (!existingBand) {
+      return res.status(404).json({ error: 'Band not found.' });
+    }
+
+    if (existingBand.userId !== req.user.id) {
+      return res.status(403).json({ error: 'You can only edit your own band listings.' });
+    }
+
+    const { name, city, genre, instrumentNeeded, description, contactEmail } = req.body;
+
+    const updatedBand = await prisma.band.update({
+      where: { id: parseInt(id) },
+      data: { name, city, genre, instrumentNeeded, description, contactEmail },
+      include: {
+        user: {
+          select: { id: true, name: true, email: true },
+        },
+      },
+    });
+
+    res.json(updatedBand);
   } catch (error) {
-    console.error('Error deleting band:', error);
-    res.status(500).json({ error: 'Failed to delete band' });
+    next(error);
+  }
+});
+
+// DELETE /:id - Delete a band (auth required, owner only)
+router.delete('/:id', auth, async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const existingBand = await prisma.band.findUnique({
+      where: { id: parseInt(id) },
+    });
+
+    if (!existingBand) {
+      return res.status(404).json({ error: 'Band not found.' });
+    }
+
+    if (existingBand.userId !== req.user.id) {
+      return res.status(403).json({ error: 'You can only delete your own band listings.' });
+    }
+
+    await prisma.band.delete({
+      where: { id: parseInt(id) },
+    });
+
+    res.status(204).send();
+  } catch (error) {
+    next(error);
   }
 });
 
