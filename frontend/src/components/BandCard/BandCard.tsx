@@ -25,6 +25,11 @@ export function BandCard({ band }: BandCardProps) {
 
   return (
     <Card className="band-card">
+      <div className="band-card__status">
+        <span className="status-dot" />
+        <span>Aktywne ogłoszenie</span>
+      </div>
+
       <div className="band-card__header">
         <div className="band-card__avatar" aria-hidden="true">
           {initials}
@@ -36,11 +41,14 @@ export function BandCard({ band }: BandCardProps) {
           </p>
         </div>
       </div>
+
       <div className="band-card__meta">
         <span>{band.genre}</span>
-        <span>{band.instrumentNeeded}</span>
       </div>
+
+      <div className="band-card__instrument">Szukamy: {band.instrumentNeeded}</div>
       <p className="band-card__description">{getDescriptionPreview(band.description)}</p>
+
       <Link to={`/bands/${band.id}`} className="text-link">
         Zobacz szczegóły
       </Link>
