@@ -7,14 +7,28 @@ interface BandCardProps {
 }
 
 export function BandCard({ band }: BandCardProps) {
+  const initials = band.name
+    .split(' ')
+    .map((part) => part[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
+
   return (
     <Card className="band-card">
+      <div className="band-card__header">
+        <div className="band-card__avatar" aria-hidden="true">
+          {initials}
+        </div>
+        <div>
+          <h2>{band.name}</h2>
+          <p>{band.city}</p>
+        </div>
+      </div>
       <div className="band-card__meta">
         <span>{band.genre}</span>
-        <span>{band.city}</span>
+        <span>{band.instrumentNeeded}</span>
       </div>
-      <h2>{band.name}</h2>
-      <p className="band-card__instrument">Szukamy: {band.instrumentNeeded}</p>
       <p>{band.description}</p>
       <Link to={`/bands/${band.id}`} className="text-link">
         Zobacz szczegóły

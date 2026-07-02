@@ -3,11 +3,15 @@
   border: 1px solid transparent;
   border-radius: var(--radius-md);
   display: inline-flex;
-  font-weight: 700;
+  font-weight: 800;
   justify-content: center;
   min-height: 2.75rem;
   padding: 0 var(--space-5);
-  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
 
   &:disabled {
     cursor: not-allowed;
@@ -15,17 +19,18 @@
   }
 
   &--primary {
-    background: var(--color-primary);
-    color: #ffffff;
+    background: linear-gradient(135deg, var(--color-primary), #38bdf8);
+    box-shadow: 0 12px 28px rgba(45, 212, 191, 0.2);
+    color: #04111f;
 
     &:hover:not(:disabled) {
-      background: var(--color-primary-dark);
+      background: linear-gradient(135deg, var(--color-primary-dark), #0ea5e9);
     }
   }
 
   &--secondary,
   &--ghost {
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.06);
     border-color: var(--color-border);
     color: var(--color-text);
   }
@@ -37,6 +42,7 @@
 }
 
 .card {
+  backdrop-filter: blur(18px);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
@@ -54,15 +60,21 @@
   }
 
   &__control {
+    background: rgba(255, 255, 255, 0.06);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
+    color: var(--color-text);
     min-height: 2.75rem;
     padding: 0 var(--space-4);
     width: 100%;
 
+    &::placeholder {
+      color: var(--color-muted);
+    }
+
     &:focus {
       border-color: var(--color-primary);
-      outline: 3px solid rgba(15, 118, 110, 0.15);
+      outline: 3px solid rgba(45, 212, 191, 0.15);
     }
 
     &[aria-invalid='true'] {
@@ -92,6 +104,7 @@
 }
 
 .search-panel {
+  backdrop-filter: blur(18px);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
@@ -100,17 +113,29 @@
   padding: var(--space-4);
 
   input {
+    background: rgba(255, 255, 255, 0.06);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
+    color: var(--color-text);
     min-height: 2.75rem;
     padding: 0 var(--space-4);
     width: 100%;
+
+    &::placeholder {
+      color: var(--color-muted);
+    }
+
+    &:focus {
+      border-color: var(--color-primary);
+      outline: 3px solid rgba(45, 212, 191, 0.15);
+    }
   }
 }
 
 .band-card {
   display: grid;
-  gap: var(--space-3);
+  gap: var(--space-4);
+  min-height: 18rem;
 
   h2 {
     font-size: 1.25rem;
@@ -122,18 +147,43 @@
     margin-bottom: 0;
   }
 
+  &__header {
+    align-items: center;
+    display: flex;
+    gap: var(--space-3);
+
+    p {
+      font-weight: 700;
+    }
+  }
+
+  &__avatar {
+    align-items: center;
+    background: linear-gradient(135deg, rgba(45, 212, 191, 0.24), rgba(147, 197, 253, 0.24));
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-primary);
+    display: flex;
+    flex: 0 0 3.25rem;
+    font-weight: 900;
+    height: 3.25rem;
+    justify-content: center;
+  }
+
   &__meta {
-    color: var(--color-accent);
     display: flex;
     flex-wrap: wrap;
     font-size: 0.85rem;
     font-weight: 800;
     gap: var(--space-2);
-  }
 
-  &__instrument {
-    color: var(--color-text) !important;
-    font-weight: 700;
+    span {
+      background: var(--color-surface-muted);
+      border: 1px solid var(--color-border);
+      border-radius: 999px;
+      color: var(--color-accent);
+      padding: var(--space-1) var(--space-3);
+    }
   }
 }
 
@@ -154,6 +204,7 @@
 
 .empty-state,
 .error-state {
+  backdrop-filter: blur(18px);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
@@ -162,7 +213,7 @@
 }
 
 .error-state {
-  border-color: rgba(180, 35, 24, 0.25);
+  border-color: rgba(251, 113, 133, 0.32);
   color: var(--color-danger);
 }
 
@@ -175,7 +226,7 @@
 }
 
 .modal-backdrop {
-  background: rgba(23, 32, 42, 0.58);
+  background: rgba(7, 10, 18, 0.68);
   inset: 0;
   padding: var(--space-4);
   position: fixed;
@@ -183,7 +234,8 @@
 }
 
 .modal {
-  background: var(--color-surface);
+  background: var(--color-surface-strong);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
   margin: 12vh auto 0;

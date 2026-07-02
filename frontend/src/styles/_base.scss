@@ -7,7 +7,10 @@
 body {
   margin: 0;
   min-width: 320px;
-  background: var(--color-bg);
+  background:
+    radial-gradient(circle at top left, rgba(45, 212, 191, 0.18), transparent 30rem),
+    radial-gradient(circle at 85% 10%, rgba(124, 58, 237, 0.18), transparent 26rem),
+    linear-gradient(135deg, var(--color-bg), #0b1020 52%, #080b13);
   color: var(--color-text);
   font-family: var(--font-base);
   line-height: 1.5;
@@ -32,15 +35,28 @@ p {
 
 .text-link {
   color: var(--color-primary);
-  font-weight: 700;
+  font-weight: 800;
   text-decoration: none;
+
+  &:hover {
+    color: var(--color-accent);
+  }
 }
 
 .eyebrow {
   color: var(--color-primary);
   font-size: 0.78rem;
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: 0;
   margin-bottom: var(--space-2);
   text-transform: uppercase;
+}
+
+.status-dot {
+  background: var(--color-primary);
+  border-radius: 50%;
+  box-shadow: 0 0 20px rgba(45, 212, 191, 0.7);
+  display: inline-block;
+  height: 0.6rem;
+  width: 0.6rem;
 }

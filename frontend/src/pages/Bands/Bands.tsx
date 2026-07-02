@@ -41,9 +41,15 @@ export function Bands() {
 
   return (
     <section className="stack">
-      <div className="page-header">
-        <p className="eyebrow">Ogłoszenia</p>
-        <h1>Zespoły szukające muzyków</h1>
+      <div className="page-header page-header--split">
+        <div>
+          <p className="eyebrow">Ogłoszenia</p>
+          <h1>Zespoły szukające muzyków</h1>
+        </div>
+        <div className="page-header__aside">
+          <span>{query.data?.pagination.total ?? 0}</span>
+          <strong>aktywnych ogłoszeń</strong>
+        </div>
       </div>
 
       <SearchBar

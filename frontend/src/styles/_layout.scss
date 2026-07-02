@@ -6,7 +6,8 @@
 
 .navbar {
   align-items: center;
-  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(18px);
+  background: rgba(7, 10, 18, 0.72);
   border-bottom: 1px solid var(--color-border);
   display: flex;
   flex-wrap: wrap;
@@ -38,6 +39,10 @@
       &.active {
         color: var(--color-primary);
       }
+
+      &:hover {
+        color: var(--color-text);
+      }
     }
   }
 
@@ -50,8 +55,8 @@
 .page {
   flex: 1;
   margin-inline: auto;
-  max-width: 1180px;
-  padding: var(--space-6) var(--space-4) var(--space-10);
+  max-width: 1240px;
+  padding: var(--space-8) var(--space-4) var(--space-10);
   width: 100%;
 }
 
@@ -68,7 +73,8 @@
 .auth-page {
   align-items: center;
   background:
-    linear-gradient(120deg, rgba(15, 118, 110, 0.12), rgba(54, 84, 134, 0.18)),
+    radial-gradient(circle at 15% 20%, rgba(45, 212, 191, 0.18), transparent 24rem),
+    radial-gradient(circle at 90% 5%, rgba(124, 58, 237, 0.22), transparent 22rem),
     var(--color-bg);
   display: grid;
   min-height: 100vh;
