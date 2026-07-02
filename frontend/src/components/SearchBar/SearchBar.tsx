@@ -31,7 +31,7 @@ export function SearchBar({ filters, onChange, onSortChange, options, sort }: Se
       <ComboBox
         label="Miasto"
         name="city"
-        placeholder="Wpisz lub wybierz miasto"
+        placeholder="Wpisz miasto"
         value={filters.city}
         options={options.cities}
         onChange={(city) => onChange({ ...filters, city })}
@@ -39,7 +39,7 @@ export function SearchBar({ filters, onChange, onSortChange, options, sort }: Se
       <ComboBox
         label="Gatunek"
         name="genre"
-        placeholder="Wpisz lub wybierz gatunek"
+        placeholder="Wpisz gatunek"
         value={filters.genre}
         options={options.genres}
         onChange={(genre) => onChange({ ...filters, genre })}
@@ -47,7 +47,7 @@ export function SearchBar({ filters, onChange, onSortChange, options, sort }: Se
       <ComboBox
         label="Instrument"
         name="instrumentNeeded"
-        placeholder="Wpisz lub wybierz instrument"
+        placeholder="Wpisz instrument"
         value={filters.instrumentNeeded}
         options={options.instruments}
         onChange={(instrumentNeeded) => onChange({ ...filters, instrumentNeeded })}

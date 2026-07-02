@@ -35,7 +35,7 @@ export function SortSelect({ onChange, value }: SortSelectProps) {
         onClick={() => setOpen((current) => !current)}
       >
         {selectedOption.label}
-        <span aria-hidden="true">⌄</span>
+        <span aria-hidden="true">v</span>
       </button>
       {isOpen && (
         <div className="sort-select__menu" role="listbox" aria-labelledby={labelId}>

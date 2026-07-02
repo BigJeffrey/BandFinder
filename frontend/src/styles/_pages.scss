@@ -188,6 +188,7 @@
 }
 
 .band-grid {
+  align-items: start;
   display: grid;
   gap: var(--space-4);
   position: relative;
