@@ -190,6 +190,8 @@
 .band-grid {
   display: grid;
   gap: var(--space-4);
+  position: relative;
+  z-index: 1;
 }
 
 .details {
@@ -265,14 +267,90 @@
 }
 
 .not-found {
+  align-items: center;
   display: grid;
-  min-height: 60vh;
-  place-items: center;
-  text-align: center;
+  gap: var(--space-8);
+  margin-inline: auto;
+  max-width: 1180px;
+  min-height: 100vh;
+  padding: var(--space-8) var(--space-4);
+  width: 100%;
 
-  h1 {
-    font-size: clamp(4rem, 20vw, 9rem);
-    margin-bottom: 0;
+  &__content {
+    max-width: 42rem;
+
+    h1 {
+      font-size: clamp(2.75rem, 8vw, 5.75rem);
+      line-height: 0.95;
+      margin-bottom: var(--space-5);
+    }
+
+    p:not(.eyebrow) {
+      color: var(--color-muted);
+      font-size: 1.1rem;
+      max-width: 34rem;
+    }
+  }
+
+  &__actions {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-top: var(--space-6);
+  }
+
+  &__panel {
+    background:
+      linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04)),
+      var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    display: grid;
+    gap: var(--space-5);
+    overflow: hidden;
+    padding: var(--space-6);
+    position: relative;
+
+    &::before {
+      background: linear-gradient(90deg, var(--color-primary), var(--color-accent-strong));
+      content: '';
+      height: 0.3rem;
+      inset: 0 0 auto;
+      position: absolute;
+    }
+
+    > span {
+      color: var(--color-primary);
+      font-size: clamp(5rem, 20vw, 10rem);
+      font-weight: 900;
+      line-height: 0.9;
+    }
+
+    strong {
+      display: block;
+      font-size: 1.35rem;
+      margin-bottom: var(--space-2);
+    }
+
+    p {
+      color: var(--color-muted);
+      margin-bottom: 0;
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .not-found {
+    grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.7fr);
+    padding-inline: var(--space-8);
+  }
+}
+
+@media (max-width: 767px) {
+  .not-found {
+    align-content: center;
   }
 }
 

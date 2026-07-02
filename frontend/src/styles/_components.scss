@@ -112,23 +112,26 @@
   display: grid;
   gap: var(--space-3);
   padding: var(--space-4);
+  position: relative;
+  z-index: 30;
 
   label,
-  .combobox {
+  .combobox,
+  .sort-select {
     display: grid;
     gap: var(--space-2);
     min-width: 0;
   }
 
   label span,
-  .combobox > label {
+  .combobox > label,
+  .sort-select > span {
     color: var(--color-text);
     font-size: 0.9rem;
     font-weight: 800;
   }
 
-  input,
-  select {
+  input {
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
@@ -146,14 +149,16 @@
       outline: 3px solid rgba(45, 212, 191, 0.15);
     }
   }
-
-  select {
-    cursor: pointer;
-  }
 }
 
-.combobox {
+.combobox,
+.sort-select {
   position: relative;
+  z-index: 1;
+
+  &:focus-within {
+    z-index: 40;
+  }
 
   &__menu {
     background: var(--color-surface-strong);
@@ -168,7 +173,7 @@
     position: absolute;
     right: 0;
     top: calc(100% + var(--space-2));
-    z-index: 15;
+    z-index: 50;
 
     button {
       background: transparent;
@@ -184,6 +189,35 @@
         background: var(--color-surface-muted);
         color: var(--color-primary);
       }
+    }
+  }
+}
+
+.sort-select {
+  &__trigger {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text);
+    cursor: pointer;
+    display: flex;
+    font-weight: 800;
+    justify-content: space-between;
+    min-height: 2.75rem;
+    padding: 0 var(--space-4);
+    text-align: left;
+    width: 100%;
+
+    &:focus,
+    &[aria-expanded='true'] {
+      border-color: var(--color-primary);
+      outline: 3px solid rgba(45, 212, 191, 0.15);
+    }
+
+    span {
+      color: var(--color-primary);
+      font-size: 1.1rem;
     }
   }
 }

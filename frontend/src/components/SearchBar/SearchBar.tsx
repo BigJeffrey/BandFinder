@@ -1,5 +1,6 @@
 import type { ChangeEvent } from 'react';
 import { ComboBox } from '../ComboBox/ComboBox';
+import { SortSelect } from '../SortSelect/SortSelect';
 import type { BandFilters, BandSort } from '../../types/band';
 
 type SearchFilters = Pick<BandFilters, 'search' | 'city' | 'genre' | 'instrumentNeeded'>;
@@ -51,14 +52,7 @@ export function SearchBar({ filters, onChange, onSortChange, options, sort }: Se
         options={options.instruments}
         onChange={(instrumentNeeded) => onChange({ ...filters, instrumentNeeded })}
       />
-      <label>
-        <span>Sortowanie</span>
-        <select value={sort} onChange={(event) => onSortChange(event.target.value as BandSort)}>
-          <option value="newest">Kiedy dodano</option>
-          <option value="name-asc">A-Z</option>
-          <option value="name-desc">Z-A</option>
-        </select>
-      </label>
+      <SortSelect value={sort} onChange={onSortChange} />
     </section>
   );
 }
