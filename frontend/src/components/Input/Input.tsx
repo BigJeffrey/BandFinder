@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import type { InputHTMLAttributes } from 'react';
 import type { FieldError } from 'react-hook-form';
 
@@ -6,12 +7,14 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: FieldError;
 }
 
-export function Input({ error, id, label, ...props }: InputProps) {
+export const Input = forwardRef<HTMLInputElement, InputProps>(({ error, id, label, ...props }, ref) => {
   return (
     <label className="field" htmlFor={id}>
       <span className="field__label">{label}</span>
-      <input id={id} className="field__control" aria-invalid={Boolean(error)} {...props} />
+      <input ref={ref} id={id} className="field__control" aria-invalid={Boolean(error)} {...props} />
       {error && <span className="field__error">{error.message}</span>}
     </label>
   );
-}
+});
+
+Input.displayName = 'Input';

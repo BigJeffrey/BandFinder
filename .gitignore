@@ -1,1 +1,7 @@
 .idea
+node_modules/
+dist/
+*.tsbuildinfo
+*.log
+frontend/vite.config.d.ts
+frontend/vite.config.js
