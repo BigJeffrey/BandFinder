@@ -24,7 +24,13 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <App />
-          <ToastContainer position="top-right" autoClose={3500} />
+          <ToastContainer
+            autoClose={3500}
+            closeButton
+            position="top-right"
+            theme="dark"
+            toastClassName="app-toast"
+          />
         </AuthProvider>
       </QueryClientProvider>
     </BrowserRouter>
