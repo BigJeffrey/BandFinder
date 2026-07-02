@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import { bandsApi } from '../../api/bandsApi';
 import { Button } from '../../components/Button/Button';
 import type { BandFilters } from '../../types/band';
+import { formatRelativeDate } from '../../utils/date';
 
-const countFilters: BandFilters = {
+const latestBandFilters: BandFilters = {
   search: '',
   city: '',
   genre: '',
@@ -14,12 +15,13 @@ const countFilters: BandFilters = {
 };
 
 export function Home() {
-  const bandsCountQuery = useQuery({
-    queryKey: ['bands', 'active-count'],
-    queryFn: () => bandsApi.list(countFilters),
+  const homeBandsQuery = useQuery({
+    queryKey: ['bands', 'home-latest'],
+    queryFn: () => bandsApi.list(latestBandFilters),
   });
 
-  const activeListingsCount = bandsCountQuery.data?.pagination.total ?? 0;
+  const latestBand = homeBandsQuery.data?.data[0];
+  const activeListingsCount = homeBandsQuery.data?.pagination.total ?? 0;
 
   return (
     <section className="home stack">
@@ -41,29 +43,41 @@ export function Home() {
           </div>
         </div>
 
-        <div className="home__panel" aria-label="Przykładowe ogłoszenie">
-          <div className="home__panel-top">
-            <span className="status-dot" />
-            <span>Aktywny nabór</span>
+        <div className="home__aside">
+          <div className="home__active-count" aria-label="Liczba aktywnych ogłoszeń">
+            <span>{homeBandsQuery.isLoading ? '...' : activeListingsCount}</span>
+            <strong>aktywnych ogłoszeń</strong>
+            <small>czeka teraz na muzyków</small>
           </div>
-          <h2>Midnight Drive</h2>
-          <p>Rock alternatywny • Warszawa</p>
-          <div className="home__instrument">Szukamy: gitara basowa</div>
-          <div className="home__meter">
-            <span />
-          </div>
-          <div className="home__panel-footer">
-            <span>3 próby / miesiąc</span>
-            <span>Kontakt email</span>
+
+          <div className="home__panel" aria-label="Najnowsze ogłoszenie">
+            <div className="home__panel-top">
+              <span className="status-dot" />
+              <span>Najnowsze ogłoszenie</span>
+            </div>
+            <h2>{latestBand?.name ?? 'Brak ogłoszeń'}</h2>
+            <p>{latestBand ? `${latestBand.genre} • ${latestBand.city}` : 'Dodaj pierwsze ogłoszenie w BandFinder'}</p>
+            <div className="home__instrument">Szukamy: {latestBand?.instrumentNeeded ?? 'muzyków'}</div>
+            <div className="home__meter">
+              <span />
+            </div>
+            <div className="home__panel-footer">
+              <span>{latestBand ? `Dodano ${formatRelativeDate(latestBand.createdAt)}` : 'Start listy'}</span>
+              {latestBand ? (
+                <Link to={`/bands/${latestBand.id}`} className="text-link">
+                  Zobacz szczegóły
+                </Link>
+              ) : (
+                <Link to="/bands/new" className="text-link">
+                  Dodaj ogłoszenie
+                </Link>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
       <div className="home__stats" aria-label="Najważniejsze skróty">
-        <div>
-          <strong>{bandsCountQuery.isLoading ? '...' : activeListingsCount}</strong>
-          <span>aktywnych ogłoszeń w BandFinder</span>
-        </div>
         <div>
           <strong>4 filtry</strong>
           <span>miasto, gatunek, instrument i nazwa</span>
