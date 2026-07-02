@@ -7,6 +7,14 @@ interface BandCardProps {
   band: Band;
 }
 
+const DESCRIPTION_PREVIEW_LENGTH = 160;
+
+const getDescriptionPreview = (description: string) => {
+  if (description.length <= DESCRIPTION_PREVIEW_LENGTH) return description;
+
+  return `${description.slice(0, DESCRIPTION_PREVIEW_LENGTH).trim()}...`;
+};
+
 export function BandCard({ band }: BandCardProps) {
   const initials = band.name
     .split(' ')
@@ -32,7 +40,7 @@ export function BandCard({ band }: BandCardProps) {
         <span>{band.genre}</span>
         <span>{band.instrumentNeeded}</span>
       </div>
-      <p>{band.description}</p>
+      <p className="band-card__description">{getDescriptionPreview(band.description)}</p>
       <Link to={`/bands/${band.id}`} className="text-link">
         Zobacz szczegóły
       </Link>
