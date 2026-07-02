@@ -71,6 +71,12 @@ const getResultsLabel = (pagination: { limit: number; page: number; total: numbe
   return `Wyświetlasz ${firstItem}-${lastItem} z ${pagination.total} ogłoszeń`;
 };
 
+const getCurrentPageLabel = (count: number) => {
+  if (count === 1) return 'Na tej stronie: 1 ogłoszenie';
+
+  return `Na tej stronie: ${count} ogłoszeń`;
+};
+
 const parsePage = (value: string | null) => {
   const page = Number(value);
   return Number.isInteger(page) && page > 0 ? page : 1;
@@ -167,7 +173,7 @@ export function Bands() {
       {query.data && (
         <div className="results-summary">
           <span>{getResultsLabel(query.data.pagination)}</span>
-          <span>Na stronie: {query.data.pagination.limit}</span>
+          <span>{getCurrentPageLabel(sortedBands.length)}</span>
         </div>
       )}
 
