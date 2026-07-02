@@ -64,39 +64,30 @@ export function Home() {
         </div>
       </div>
 
-      <div className="home__stats" aria-label="Najważniejsze skróty">
-        <div>
-          <strong>4 filtry</strong>
-          <span>miasto, gatunek, instrument i nazwa</span>
+      <section className="home__guide" aria-labelledby="home-guide-title">
+        <div className="home__guide-header">
+          <p className="eyebrow">Szybki start</p>
+          <h2 id="home-guide-title">Od znalezienia ogłoszenia do kontaktu w kilku krokach.</h2>
         </div>
-        <div>
-          <strong>JWT auth</strong>
-          <span>bezpieczne dodawanie i edycja własnych ofert</span>
-        </div>
-        <div>
-          <strong>REST API</strong>
-          <span>dane pobierane bez filtrowania po stronie klienta</span>
-        </div>
-      </div>
 
-      <div className="home__categories" aria-label="Popularne kierunki">
-        <div>
-          <span>Rock</span>
-          <strong>Gitary, bas, perkusja</strong>
-        </div>
-        <div>
-          <span>Jazz</span>
-          <strong>Saksofon, kontrabas, piano</strong>
-        </div>
-        <div>
-          <span>Wokal</span>
-          <strong>Frontman, backing vocals</strong>
-        </div>
-        <div>
-          <span>Elektronika</span>
-          <strong>Produkcja, live act</strong>
-        </div>
-      </div>
+        <ol className="home__steps">
+          <li>
+            <span>01</span>
+            <strong>Wybierz miasto, gatunek albo instrument</strong>
+            <p>Filtry zawężają listę od razu, a po wejściu w szczegóły wrócisz do tych samych ustawień.</p>
+          </li>
+          <li>
+            <span>02</span>
+            <strong>Sprawdź najnowsze aktywne nabory</strong>
+            <p>Karty pokazują zespół, lokalizację, potrzebny instrument i krótki opis bez przeklikiwania.</p>
+          </li>
+          <li>
+            <span>03</span>
+            <strong>Dodaj własne ogłoszenie zespołu</strong>
+            <p>Opisz skład, styl grania i kontakt, żeby właściwi muzycy mogli szybko odpowiedzieć.</p>
+          </li>
+        </ol>
+      </section>
     </section>
   );
 }
