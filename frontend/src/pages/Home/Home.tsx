@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { bandsApi } from '../../api/bandsApi';
+import { BandCard } from '../../components/BandCard/BandCard';
 import { Button } from '../../components/Button/Button';
 import type { BandFilters } from '../../types/band';
-import { formatRelativeDate } from '../../utils/date';
 
 const latestBandFilters: BandFilters = {
   search: '',
@@ -50,30 +50,17 @@ export function Home() {
             <small>czeka teraz na muzyków</small>
           </div>
 
-          <div className="home__panel" aria-label="Najnowsze ogłoszenie">
-            <div className="home__panel-top">
-              <span className="status-dot" />
-              <span>Najnowsze ogłoszenie</span>
+          {latestBand ? (
+            <BandCard band={latestBand} />
+          ) : (
+            <div className="home__empty-card">
+              <strong>Brak ogłoszeń</strong>
+              <span>Dodaj pierwsze ogłoszenie w BandFinder.</span>
+              <Link to="/bands/new" className="text-link">
+                Dodaj ogłoszenie
+              </Link>
             </div>
-            <h2>{latestBand?.name ?? 'Brak ogłoszeń'}</h2>
-            <p>{latestBand ? `${latestBand.genre} • ${latestBand.city}` : 'Dodaj pierwsze ogłoszenie w BandFinder'}</p>
-            <div className="home__instrument">Szukamy: {latestBand?.instrumentNeeded ?? 'muzyków'}</div>
-            <div className="home__meter">
-              <span />
-            </div>
-            <div className="home__panel-footer">
-              <span>{latestBand ? `Dodano ${formatRelativeDate(latestBand.createdAt)}` : 'Start listy'}</span>
-              {latestBand ? (
-                <Link to={`/bands/${latestBand.id}`} className="text-link">
-                  Zobacz szczegóły
-                </Link>
-              ) : (
-                <Link to="/bands/new" className="text-link">
-                  Dodaj ogłoszenie
-                </Link>
-              )}
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
