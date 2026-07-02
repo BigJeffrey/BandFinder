@@ -195,6 +195,21 @@
   z-index: 1;
 }
 
+.results-summary {
+  align-items: center;
+  color: var(--color-muted);
+  display: flex;
+  flex-wrap: wrap;
+  font-weight: 800;
+  gap: var(--space-3);
+  justify-content: space-between;
+  margin-top: calc(var(--space-6) * -1);
+
+  span:first-child {
+    color: var(--color-text);
+  }
+}
+
 .details {
   display: grid;
   gap: var(--space-6);

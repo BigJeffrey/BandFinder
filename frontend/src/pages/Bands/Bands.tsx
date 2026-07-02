@@ -58,6 +58,15 @@ const sortBands = (bands: Band[], sort: BandSort) => {
   );
 };
 
+const getResultsLabel = (pagination: { limit: number; page: number; total: number }) => {
+  if (pagination.total === 0) return 'Brak ogłoszeń dla wybranych filtrów';
+
+  const firstItem = (pagination.page - 1) * pagination.limit + 1;
+  const lastItem = Math.min(pagination.page * pagination.limit, pagination.total);
+
+  return `Wyświetlasz ${firstItem}-${lastItem} z ${pagination.total} ogłoszeń`;
+};
+
 export function Bands() {
   const [filters, setFilters] = useState<BandFilters>(initialFilters);
   const [sort, setSort] = useState<BandSort>('newest');
@@ -115,6 +124,13 @@ export function Bands() {
         onChange={(nextFilters) => setFilters((current) => ({ ...current, ...nextFilters, page: 1 }))}
         onSortChange={setSort}
       />
+
+      {query.data && (
+        <div className="results-summary">
+          <span>{getResultsLabel(query.data.pagination)}</span>
+          <span>Na stronie: {query.data.pagination.limit}</span>
+        </div>
+      )}
 
       {query.isLoading && <Loader />}
       {query.isError && <ErrorState message={getApiErrorMessage(query.error)} />}
