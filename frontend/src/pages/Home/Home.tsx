@@ -1,7 +1,26 @@
+import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
+import { bandsApi } from '../../api/bandsApi';
 import { Button } from '../../components/Button/Button';
+import type { BandFilters } from '../../types/band';
+
+const countFilters: BandFilters = {
+  search: '',
+  city: '',
+  genre: '',
+  instrumentNeeded: '',
+  page: 1,
+  limit: 1,
+};
 
 export function Home() {
+  const bandsCountQuery = useQuery({
+    queryKey: ['bands', 'active-count'],
+    queryFn: () => bandsApi.list(countFilters),
+  });
+
+  const activeListingsCount = bandsCountQuery.data?.pagination.total ?? 0;
+
   return (
     <section className="home stack">
       <div className="home__hero">
@@ -41,6 +60,10 @@ export function Home() {
       </div>
 
       <div className="home__stats" aria-label="Najważniejsze skróty">
+        <div>
+          <strong>{bandsCountQuery.isLoading ? '...' : activeListingsCount}</strong>
+          <span>aktywnych ogłoszeń w BandFinder</span>
+        </div>
         <div>
           <strong>4 filtry</strong>
           <span>miasto, gatunek, instrument i nazwa</span>

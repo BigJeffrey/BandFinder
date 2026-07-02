@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { bandsApi } from '../../api/bandsApi';
 import { BandCard } from '../../components/BandCard/BandCard';
@@ -11,13 +12,16 @@ import { useDebounce } from '../../hooks/useDebounce';
 import { getApiErrorMessage } from '../../utils/errors';
 import type { Band, BandFilters, BandSort } from '../../types/band';
 
+const DEFAULT_LIMIT = 9;
+const sortValues: BandSort[] = ['newest', 'name-asc', 'name-desc'];
+
 const initialFilters: BandFilters = {
   search: '',
   city: '',
   genre: '',
   instrumentNeeded: '',
   page: 1,
-  limit: 9,
+  limit: DEFAULT_LIMIT,
 };
 
 const optionFilters: BandFilters = {
@@ -67,9 +71,40 @@ const getResultsLabel = (pagination: { limit: number; page: number; total: numbe
   return `Wyświetlasz ${firstItem}-${lastItem} z ${pagination.total} ogłoszeń`;
 };
 
+const parsePage = (value: string | null) => {
+  const page = Number(value);
+  return Number.isInteger(page) && page > 0 ? page : 1;
+};
+
+const parseSort = (value: string | null): BandSort =>
+  sortValues.includes(value as BandSort) ? (value as BandSort) : 'newest';
+
+const getFiltersFromParams = (params: URLSearchParams): BandFilters => ({
+  search: params.get('search') ?? initialFilters.search,
+  city: params.get('city') ?? initialFilters.city,
+  genre: params.get('genre') ?? initialFilters.genre,
+  instrumentNeeded: params.get('instrumentNeeded') ?? initialFilters.instrumentNeeded,
+  page: parsePage(params.get('page')),
+  limit: DEFAULT_LIMIT,
+});
+
+const getNextParams = (filters: BandFilters, sort: BandSort) => {
+  const params = new URLSearchParams();
+
+  if (filters.search) params.set('search', filters.search);
+  if (filters.city) params.set('city', filters.city);
+  if (filters.genre) params.set('genre', filters.genre);
+  if (filters.instrumentNeeded) params.set('instrumentNeeded', filters.instrumentNeeded);
+  if (filters.page > 1) params.set('page', String(filters.page));
+  if (sort !== 'newest') params.set('sort', sort);
+
+  return params;
+};
+
 export function Bands() {
-  const [filters, setFilters] = useState<BandFilters>(initialFilters);
-  const [sort, setSort] = useState<BandSort>('newest');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const filters = useMemo(() => getFiltersFromParams(searchParams), [searchParams]);
+  const sort = useMemo(() => parseSort(searchParams.get('sort')), [searchParams]);
   const debouncedFilters = useDebounce(filters, 450);
 
   const query = useQuery({
@@ -104,6 +139,10 @@ export function Bands() {
 
   const sortedBands = useMemo(() => sortBands(query.data?.data ?? [], sort), [query.data, sort]);
 
+  const updateFilters = (nextFilters: BandFilters, nextSort = sort) => {
+    setSearchParams(getNextParams(nextFilters, nextSort), { replace: true });
+  };
+
   return (
     <section className="stack">
       <div className="page-header page-header--split">
@@ -121,8 +160,8 @@ export function Bands() {
         filters={searchFilters}
         options={filterOptions}
         sort={sort}
-        onChange={(nextFilters) => setFilters((current) => ({ ...current, ...nextFilters, page: 1 }))}
-        onSortChange={setSort}
+        onChange={(nextFilters) => updateFilters({ ...filters, ...nextFilters, page: 1 })}
+        onSortChange={(nextSort) => updateFilters({ ...filters, page: 1 }, nextSort)}
       />
 
       {query.data && (
@@ -146,7 +185,7 @@ export function Bands() {
           </div>
           <Pagination
             pagination={query.data.pagination}
-            onPageChange={(page) => setFilters((current) => ({ ...current, page }))}
+            onPageChange={(page) => updateFilters({ ...filters, page })}
           />
         </>
       )}
