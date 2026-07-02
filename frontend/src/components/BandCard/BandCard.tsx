@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Card } from '../Card/Card';
 import type { Band } from '../../types/band';
+import { formatRelativeDate } from '../../utils/date';
 
 interface BandCardProps {
   band: Band;
@@ -22,7 +23,9 @@ export function BandCard({ band }: BandCardProps) {
         </div>
         <div>
           <h2>{band.name}</h2>
-          <p>{band.city}</p>
+          <p>
+            {band.city} • {formatRelativeDate(band.createdAt)}
+          </p>
         </div>
       </div>
       <div className="band-card__meta">

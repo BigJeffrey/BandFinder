@@ -27,6 +27,8 @@ export interface BandFilters {
   limit: number;
 }
 
+export type BandSort = 'newest' | 'name-asc' | 'name-desc';
+
 export interface Pagination {
   total: number;
   page: number;

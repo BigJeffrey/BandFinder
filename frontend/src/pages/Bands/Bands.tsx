@@ -9,7 +9,7 @@ import { Pagination } from '../../components/Pagination/Pagination';
 import { SearchBar } from '../../components/SearchBar/SearchBar';
 import { useDebounce } from '../../hooks/useDebounce';
 import { getApiErrorMessage } from '../../utils/errors';
-import type { BandFilters } from '../../types/band';
+import type { Band, BandFilters, BandSort } from '../../types/band';
 
 const initialFilters: BandFilters = {
   search: '',
@@ -20,13 +20,57 @@ const initialFilters: BandFilters = {
   limit: 9,
 };
 
+const optionFilters: BandFilters = {
+  search: '',
+  city: '',
+  genre: '',
+  instrumentNeeded: '',
+  page: 1,
+  limit: 100,
+};
+
+const uniqueOptions = (values: string[]) => {
+  const options = new Map<string, string>();
+
+  values.forEach((value) => {
+    const normalized = value.trim().toLocaleLowerCase('pl-PL');
+    if (normalized && !options.has(normalized)) {
+      options.set(normalized, value.trim());
+    }
+  });
+
+  return [...options.values()];
+};
+
+const sortBands = (bands: Band[], sort: BandSort) => {
+  const sortedBands = [...bands];
+
+  if (sort === 'name-asc') {
+    return sortedBands.sort((left, right) => left.name.localeCompare(right.name, 'pl-PL'));
+  }
+
+  if (sort === 'name-desc') {
+    return sortedBands.sort((left, right) => right.name.localeCompare(left.name, 'pl-PL'));
+  }
+
+  return sortedBands.sort(
+    (left, right) => new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime(),
+  );
+};
+
 export function Bands() {
   const [filters, setFilters] = useState<BandFilters>(initialFilters);
+  const [sort, setSort] = useState<BandSort>('newest');
   const debouncedFilters = useDebounce(filters, 450);
 
   const query = useQuery({
     queryKey: ['bands', debouncedFilters],
     queryFn: () => bandsApi.list(debouncedFilters),
+  });
+
+  const optionsQuery = useQuery({
+    queryKey: ['bands', 'filter-options'],
+    queryFn: () => bandsApi.list(optionFilters),
   });
 
   const searchFilters = useMemo(
@@ -38,6 +82,18 @@ export function Bands() {
     }),
     [filters],
   );
+
+  const filterOptions = useMemo(() => {
+    const bands = optionsQuery.data?.data ?? [];
+
+    return {
+      cities: uniqueOptions(bands.map((band) => band.city)),
+      genres: uniqueOptions(bands.map((band) => band.genre)),
+      instruments: uniqueOptions(bands.map((band) => band.instrumentNeeded)),
+    };
+  }, [optionsQuery.data]);
+
+  const sortedBands = useMemo(() => sortBands(query.data?.data ?? [], sort), [query.data, sort]);
 
   return (
     <section className="stack">
@@ -54,7 +110,10 @@ export function Bands() {
 
       <SearchBar
         filters={searchFilters}
+        options={filterOptions}
+        sort={sort}
         onChange={(nextFilters) => setFilters((current) => ({ ...current, ...nextFilters, page: 1 }))}
+        onSortChange={setSort}
       />
 
       {query.isLoading && <Loader />}
@@ -62,10 +121,10 @@ export function Bands() {
       {query.data?.data.length === 0 && (
         <EmptyState title="Brak wyników" description="Zmień kryteria wyszukiwania lub wróć później." />
       )}
-      {query.data && query.data.data.length > 0 && (
+      {query.data && sortedBands.length > 0 && (
         <>
           <div className="band-grid">
-            {query.data.data.map((band) => (
+            {sortedBands.map((band) => (
               <BandCard key={band.id} band={band} />
             ))}
           </div>
