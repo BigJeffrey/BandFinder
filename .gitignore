@@ -5,3 +5,5 @@ dist/
 *.log
 frontend/vite.config.d.ts
 frontend/vite.config.js
+/documentation/*
+!/documentation/dokumentacja-projektu.md
