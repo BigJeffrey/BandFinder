@@ -122,9 +122,9 @@ Interaktywna dokumentacja Swagger UI jest dostępna pod adresem `/api-docs` po u
 
 | Osoba | Rola |
 |---|---|
-| [Imię Nazwisko] | Deployment & Infrastruktura |
-| [Imię Nazwisko] | Backend API |
-| [Imię Nazwisko] | Frontend |
+| Mateusz Serafin | Deployment & Infrastruktura |
+| Piotr Baliński | Backend API |
+| Nikodem Szubierski | Frontend |
 
 ## Licencja
 
